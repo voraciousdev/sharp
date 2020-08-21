@@ -12,6 +12,7 @@ const gm = require('gm');
 const imagemagick = require('imagemagick');
 const mapnik = require('mapnik');
 const jimp = require('jimp');
+const imageflow = require('@imazen/imageflow');
 
 const fixtures = require('../fixtures');
 
@@ -181,6 +182,43 @@ async.series({
               assert.notStrictEqual(null, buffer);
               deferred.resolve();
             }
+          });
+      }
+    });
+    // imageflow
+    jpegSuite.add('imageflow-file-file', {
+      defer: true,
+      fn: function (deferred) {
+        new imageflow.Steps(new imageflow.FromFile(fixtures.inputJpg))
+          .constrainWithin(width, height, { down_filter: 'lanczos' })
+          .encode(
+            new imageflow.FromFile(fixtures.outputJpg),
+            new imageflow.MozJPEG(80, false)
+          )
+          .execute()
+          .then(function () {
+            deferred.resolve();
+          })
+          .catch(function (err) {
+            throw err;
+          });
+      }
+    }).add('imageflow-buffer-buffer', {
+      defer: true,
+      fn: function (deferred) {
+        new imageflow.Steps(new imageflow.FromBuffer(inputJpgBuffer))
+          .constrainWithin(width, height, { down_filter: 'lanczos' })
+          .encode(
+            new imageflow.FromBuffer(null, 'key'),
+            new imageflow.MozJPEG(80, false)
+          )
+          .execute()
+          .then(function (buffer) {
+            assert.notStrictEqual(null, buffer);
+            deferred.resolve();
+          })
+          .catch(function (err) {
+            throw err;
           });
       }
     });
