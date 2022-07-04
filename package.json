@@ -99,6 +99,7 @@
     "docs-publish": "cd docs && npx firebase-tools deploy --project pixelplumbing --only hosting:pixelplumbing-sharp"
   },
   "main": "lib/index.js",
+  "type": "commonjs",
   "files": [
     "binding.gyp",
     "install/**",
